@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='checkpoint',
-    version='0.1.4',
+    version='0.1.5',
     packages=find_packages(),
     package_data={'checkpoint':["checkpoint/*"]},
     include_package_data=True,
