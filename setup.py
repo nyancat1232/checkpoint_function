@@ -2,8 +2,9 @@ from setuptools import setup, find_packages
 
 setup(
     name='checkpoint',
-    version='0.1.3',
+    version='0.1.4',
     packages=find_packages(include=['checkpoint']),
+    include_package_data=True,
     description='functions for checkpointing',
     url='https://github.com/nyancat1232/checkpoint_function',
     classifiers=[
