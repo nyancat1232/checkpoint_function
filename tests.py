@@ -9,3 +9,6 @@ class TestExample(unittest.TestCase):
             x = yield val,'checkpoint1'
             yield val+x,'checkpoint2'
         self.assertEqual(func(3).checkpoint2(checkpoint1=2),5)
+
+if __name__ == '__main__':
+    unittest.main()
