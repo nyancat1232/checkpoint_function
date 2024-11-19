@@ -1,1 +1,1 @@
-from checkpoint_function import CheckPointFunctionDecoration,CheckPointFunctionV3 as CheckPointFunction
+from checkpoint.checkpoint_function import CheckPointFunctionDecoration,CheckPointFunctionV3 as CheckPointFunction
