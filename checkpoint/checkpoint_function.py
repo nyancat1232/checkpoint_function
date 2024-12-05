@@ -62,12 +62,12 @@ class CheckPointFunctionV3:
                 self._stop_iter = False
                 return self
             def __next__(self):
-                while tup := next(self._gen):
+                while point := next(self._gen):
                     if self._stop_iter:
                         raise StopIteration
-                    if tup[1] == self.checkpoint:
+                    if point[1] == self.checkpoint:
                         self._stop_iter = True
-                    return tup[0]
+                    return point[0]
                     
         return CheckPointFunctionContexted(self.func,self.init_args,self.init_kwargs,checkpoint)
     def __call__(self, *args: Any, **kwds: Any) -> Self:
