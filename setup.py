@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='checkpoint',
-    version='0.1.8',
+    version='0.1.9',
     packages=find_packages(exclude=['tests.py']),
     include_package_data=True,
     description='functions for checkpointing',

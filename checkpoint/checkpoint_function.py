@@ -1,7 +1,12 @@
 from typing import Generator,Any
 from typing import Self
 
-class CheckPointFunctionV3:
+class Returner:
+    def __init__(self,return_val:Any,msg:str) -> None:
+        self.return_val = return_val
+        self.msg = msg
+
+class CheckPointFunction:
     '''
     Making a function return by checkpoints
 
@@ -32,6 +37,16 @@ class CheckPointFunctionV3:
                 self.init_args = init_args
                 self.init_kwargs = init_kwargs.copy()
 
+            def _convert_to_returner(self,point:tuple[Any,str] | Returner) -> Returner:
+                if type(point) == tuple:
+                    point = Returner(return_val=point[0],msg=point[1])
+                    print('Implicitly converted to Returner')
+                elif type(point) == Returner:
+                    pass
+                else:
+                    raise ValueError(f'Invalid type {type(point)}')
+                return point
+            
             def __call__(self, **kwds: Any) -> Any:
                 '''
                 Executes until checkpoint reaches.
@@ -52,22 +67,27 @@ class CheckPointFunctionV3:
 
                 sender_memory = None
                 while point := gen.send(sender_memory):
+                    point : tuple[Any,str] | Returner
+                    point = self._convert_to_returner(point)
+                    
                     sender_memory = None
-                    if point[1] == self.checkpoint:
-                        return point[0]
-                    elif point[1] in kwds:
-                        sender_memory = kwds[point[1]]
+                    if point.msg == self.checkpoint:
+                        return point.return_val
+                    elif point.msg in kwds:
+                        sender_memory = kwds[point.msg]
             def __iter__(self):
                 self._gen = self.func(*self.init_args,**self.init_kwargs)
                 self._stop_iter = False
                 return self
             def __next__(self):
                 while point := next(self._gen):
+                    point = self._convert_to_returner(point)
+
                     if self._stop_iter:
                         raise StopIteration
-                    if point[1] == self.checkpoint:
+                    if point.msg == self.checkpoint:
                         self._stop_iter = True
-                    return point[0]
+                    return point.return_val
                     
         return CheckPointFunctionContexted(self.func,self.init_args,self.init_kwargs,checkpoint)
     def __call__(self, *args: Any, **kwds: Any) -> Self:
@@ -104,4 +124,4 @@ class CheckPointFunctionV3:
 
 
 def CheckPointFunctionDecoration(func:Generator[tuple[Any,str],Any,Any]):
-    return CheckPointFunctionV3(func)
+    return CheckPointFunction(func)
