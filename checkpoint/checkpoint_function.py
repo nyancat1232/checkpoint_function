@@ -51,12 +51,12 @@ class CheckPointFunctionV3:
                 gen = self.func(*self.init_args,**self.init_kwargs)
 
                 sender_memory = None
-                while tup := gen.send(sender_memory):
+                while point := gen.send(sender_memory):
                     sender_memory = None
-                    if tup[1] == self.checkpoint:
-                        return tup[0]
-                    elif tup[1] in kwds:
-                        sender_memory = kwds[tup[1]]
+                    if point[1] == self.checkpoint:
+                        return point[0]
+                    elif point[1] in kwds:
+                        sender_memory = kwds[point[1]]
             def __iter__(self):
                 self._gen = self.func(*self.init_args,**self.init_kwargs)
                 self._stop_iter = False
