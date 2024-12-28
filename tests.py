@@ -17,7 +17,14 @@ class TestExample(unittest.TestCase):
             yield val-10,'checkpoint3'
         
         self.assertListEqual([3,4,-7],list(func(3).checkpoint3))
- 
+    def test_iteration_if_not_declare_checkpoint(self):
+        @cp.CheckPointFunctionDecoration
+        def func(val:int):
+            yield val,'apple'
+            yield val+1,'banana'
+            yield val-10,'cherry'
+
+        self.assertListEqual([-3,-2,-13],list(func(-3)))
 
 if __name__ == '__main__':
     unittest.main()

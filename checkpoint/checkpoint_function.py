@@ -127,9 +127,10 @@ class CheckPointFunction:
         return self
 
     def __iter__(self):
+        self._gen = self.func(*self.init_args,**self.init_kwargs)
         return self
     def __next__(self):
-        while point := next(self.func):
+        while point := next(self._gen):
             point = self._convert_to_returner(point)
 
             return point.return_val
