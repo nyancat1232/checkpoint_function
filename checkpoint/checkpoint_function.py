@@ -30,6 +30,9 @@ class CheckPointFunction:
         self.init_kwargs=dict()
     def __getattr__(self,checkpoint:str):
         class CheckPointFunctionContexted:
+            '''
+            Includes where to stop(called checkpoint)
+            '''
             def __init__(self,func:Generator[tuple[Any,str],Any,Any],
                          init_args:tuple,init_kwargs:dict,checkpoint:str) -> None:
                 self.func=func
@@ -121,6 +124,7 @@ class CheckPointFunction:
         self.init_args= args
         self.init_kwargs = kwds.copy()
         return self
+    def __iter__(self):
 
 
 def CheckPointFunctionDecoration(func:Generator[tuple[Any,str],Any,Any]):
