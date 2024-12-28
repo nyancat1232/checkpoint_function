@@ -28,8 +28,19 @@ class CheckPointFunction:
         self.func=func
         self.init_args=tuple()
         self.init_kwargs=dict()
+
+    def _convert_to_returner(self,point:tuple[Any,str] | Returner) -> Returner:
+        if type(point) == tuple:
+            point = Returner(return_val=point[0],msg=point[1])
+            print('Implicitly converted to Returner')
+        elif type(point) == Returner:
+            pass
+        else:
+            raise ValueError(f'Invalid type {type(point)}')
+        return point
+    
     def __getattr__(self,checkpoint:str):
-        class CheckPointFunctionContexted:
+        class CheckPointFunctionContexted(CheckPointFunction):
             '''
             Includes where to stop(called checkpoint)
             '''
@@ -40,16 +51,6 @@ class CheckPointFunction:
                 self.init_args = init_args
                 self.init_kwargs = init_kwargs.copy()
 
-            def _convert_to_returner(self,point:tuple[Any,str] | Returner) -> Returner:
-                if type(point) == tuple:
-                    point = Returner(return_val=point[0],msg=point[1])
-                    print('Implicitly converted to Returner')
-                elif type(point) == Returner:
-                    pass
-                else:
-                    raise ValueError(f'Invalid type {type(point)}')
-                return point
-            
             def __call__(self, **kwds: Any) -> Any:
                 '''
                 Executes until checkpoint reaches.
@@ -124,8 +125,14 @@ class CheckPointFunction:
         self.init_args= args
         self.init_kwargs = kwds.copy()
         return self
-    def __iter__(self):
 
+    def __iter__(self):
+        return self
+    def __next__(self):
+        while point := next(self.func):
+            point = self._convert_to_returner(point)
+
+            return point.return_val
 
 def CheckPointFunctionDecoration(func:Generator[tuple[Any,str],Any,Any]):
     return CheckPointFunction(func)
